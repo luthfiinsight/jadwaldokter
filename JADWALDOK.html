@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Dokter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dark-mode {
+            background-color: #333;
+            color: white;
+        }
+        header {
+            background: linear-gradient(90deg, #4caf50, #ffeb3b);
+            color: black;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        .container {
+            padding: 20px;
+        }
+        #search {
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        select {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: calc(50% - 12px);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #4caf50;
+            color: white;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(90deg, #4caf50, #ffeb3b);
+            color: black;
+        }
+        .toggle-btn {
+            cursor: pointer;
+            float: right;
+            margin: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Jadwal Dokter RS Hermina Padang</h1>
+    <button class="toggle-btn" onclick="toggleDarkMode()"><i class="fas fa-moon"></i> Toggle Dark Mode</button>
+</header>
+
+<div class="container">
+    <input type="text" id="search" placeholder="Cari berdasarkan nama dokter...">
+    <div>
+        <select id="specialization">
+            <option value="">Pilihan Spesialisasi</option>
+            <option value="Umum">Dokter Umum</option>
+            <option value="Gigi">Dokter Gigi</option>
+            <option value="Anak">Dokter Anak</option>
+        </select>
+        <select id="service-type">
+            <option value="">Pilihan Layanan</option>
+            <option value="BPJS">BPJS</option>
+            <option value="Executive">Executive</option>
+        </select>
+    </div>
+
+    <table id="doctor-schedule">
+        <thead>
+            <tr>
+                <th>Nama Dokter</th>
+                <th>Spesialisasi</th>
+                <th>Waktu</th>
+                <th>Jenis Layanan</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-specialization="Umum" data-service-type="BPJS">
+                <td>Dr. Andi</td>
+                <td>Dokter Umum</td>
+                <td>Senin, 09:00 - 12:00</td>
+                <td>BPJS</td>
+            </tr>
+            <tr data-specialization="Gigi" data-service-type="Executive">
+                <td>Dr. Budi</td>
+                <td>Dokter Gigi</td>
+                <td>Selasa, 10:00 - 13:00</td>
+                <td>Executive</td>
+            </tr>
+            <tr data-specialization="Anak" data-service-type="BPJS">
+                <td>Dr. Citra</td>
+                <td>Dokter Anak</td>
+                <td>Rabu, 11:00 - 14:00</td>
+                <td>BPJS</td>
+            </tr>
+            <tr data-specialization="Umum" data-service-type="Executive">
+                <td>Dr. Dodi</td>
+                <td>Dokter Umum</td>
+                <td>Kamis, 08:00 - 11:00</td>
+                <td>Executive</td>
+            </tr>
+            <!-- Tambahkan baris lain sesuai kebutuhan -->
+        </tbody>
+    </table>
+</div>
+
+<footer>
+    &copy; 2023 Luthfi Kurnia
+</footer>
+
+<script>
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+    }
+
+    document.getElementById('search').addEventListener('keyup', filterDoctors);
+    document.getElementById('specialization').addEventListener('change', filterDoctors);
+    document.getElementById('service-type').addEventListener('change', filterDoctors);
+    
+    function filterDoctors() {
+        const search = document.getElementById('search').value.toLowerCase();
+        const specialization = document.getElementById('specialization').value;
+        const serviceType = document.getElementById('service-type').value;
+        const rows = document.querySelectorAll('#doctor-schedule tbody tr');
+
+        rows.forEach(row => {
+            const name = row.cells[0].textContent.toLowerCase();
+            const rowSpecialization = row.getAttribute('data-specialization');
+            const rowServiceType = row.getAttribute('data-service-type');
+
+            const isNameMatch = name.includes(search);
+            const isSpecializationMatch = specialization ? rowSpecialization === specialization : true;
+            const isServiceTypeMatch = serviceType ? rowServiceType === serviceType : true;
+
+            if (isNameMatch && isSpecializationMatch && isServiceTypeMatch) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
