@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Dokter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS internal untuk desain modern dan responsif */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #a8e063, #56ab2f);
+            --secondary-gradient: linear-gradient(135deg, #fceabb, #f8b500);
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --light-text: #666;
+            --border-color: #e0e6ec;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --hover-shadow: rgba(0, 0, 0, 0.15);
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-radius: 25px;
+            box-shadow: 0 15px 30px var(--shadow-color);
+            transition: transform var(--transition-speed) ease-in-out;
+            border: 1px solid var(--border-color);
+            flex-grow: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--light-text);
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .search-container input,
+        .filter-container select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 15px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            outline: none;
+            transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+
+        .search-container input:focus,
+        .filter-container select:focus {
+            border-color: #56ab2f;
+            box-shadow: 0 0 0 4px rgba(86, 171, 47, 0.2);
+        }
+
+        .search-container input::placeholder {
+            color: #b0b8c4;
+            font-style: italic;
+        }
+
+        .category-section {
+            margin-top: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .loading-text {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--light-text);
+            margin-top: 50px;
+        }
+
+        .category-section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #56ab2f;
+            position: relative;
+        }
+
+        .category-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 5px;
+            background: var(--secondary-gradient);
+            border-radius: 5px;
+        }
+        
+        .doctor-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .doctor-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            box-shadow: 0 10px 20px var(--shadow-color);
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+            border: 1px solid var(--border-color);
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px var(--hover-shadow);
+        }
+
+        .doctor-card h3 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .doctor-card p {
+            font-size: 1rem;
+            color: var(--light-text);
+            margin-bottom: 0.5rem;
+        }
+        
+        .doctor-card .specialty {
+            background: var(--primary-gradient);
+            color: #fff;
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .doctor-card .schedule {
+            width: 100%;
+            background-color: var(--bg-color);
+            padding: 1rem;
+            border-radius: 15px;
+            margin-top: 1rem;
+            border: 1px dashed var(--border-color);
+        }
+
+        .doctor-card .schedule strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: #56ab2f;
+        }
+
+        .doctor-card .schedule p {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            font-size: 0.9rem;
+            color: var(--light-text);
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Responsif untuk layar yang lebih kecil */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            .container {
+                padding: 1rem;
+                border-radius: 15px;
+            }
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            .header p {
+                font-size: 1rem;
+            }
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            .doctor-card {
+                padding: 1.5rem;
+            }
+            .doctor-card h3 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Jadwal Praktik Dokter</h1>
+            <p>Data jadwal diambil secara dinamis.</p>
+        </div>
+
+        <div class="controls">
+            <div class="search-container">
+                <input type="text" id="searchInput" onkeyup="filterDoctors()" placeholder="Cari nama atau spesialisasi dokter...">
+            </div>
+            <div class="filter-container">
+                <select id="specialtyFilter" onchange="filterDoctors()">
+                    <option value="">Semua Spesialisasi</option>
+                    </select>
+            </div>
+            <div class="filter-container">
+                <select id="serviceFilter" onchange="filterDoctors()">
+                    <option value="">Semua Layanan</option>
+                    <option value="Eksekutif">Layanan Eksekutif</option>
+                    <option value="BPJS">Layanan BPJS</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="category-section" id="eksekutif-section">
+            <h2>Layanan Eksekutif</h2>
+            <div class="doctor-list" id="eksekutif-list">
+                <p class="loading-text">Memuat data dokter...</p>
+            </div>
+        </div>
+        
+        <div class="category-section" id="bpjs-section">
+            <h2>Layanan BPJS</h2>
+            <div class="doctor-list" id="bpjs-list">
+                <p class="loading-text">Memuat data dokter...</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        Copyright &copy; Luthfi Kurnia 2025.
+    </footer>
+
+    <script>
+        // Ganti URL di bawah ini dengan Web App URL dari Google Apps Script Anda
+        const SPREADSHEET_API_URL = 'https://script.google.com/macros/s/AKfycbz20IhjJFG5_OQ0D4PzN8PcyZDbjTycuFiDOyrXWexMySMC8c2RDyMwZLO68hDHY77vJw/exec';
+        let allDoctorsData = []; // Variabel untuk menyimpan semua data dokter
+
+        // Fungsi untuk mengambil data dari Google Sheets
+        async function fetchDoctorData() {
+            try {
+                const response = await fetch(SPREADSHEET_API_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                allDoctorsData = await response.json();
+                
+                // Pastikan data tidak kosong
+                if (allDoctorsData.length === 0) {
+                    document.getElementById('eksekutif-list').innerHTML = '<p class="loading-text">Tidak ada data dokter yang ditemukan.</p>';
+                    document.getElementById('bpjs-list').innerHTML = '';
+                    return;
+                }
+
+                // Hapus teks loading
+                document.getElementById('eksekutif-list').innerHTML = '';
+                document.getElementById('bpjs-list').innerHTML = '';
+
+                populateSpecialtyFilter(allDoctorsData);
+                renderDoctors(allDoctorsData);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                document.getElementById('eksekutif-list').innerHTML = `<p class="loading-text" style="color: red;">Gagal memuat data: ${error.message}. Mohon periksa URL API dan skrip Google Sheets.</p>`;
+                document.getElementById('bpjs-list').innerHTML = '';
+            }
+        }
+
+        // Fungsi untuk mengisi opsi filter spesialisasi secara dinamis
+        function populateSpecialtyFilter(doctors) {
+            const specialtyFilter = document.getElementById('specialtyFilter');
+            // Gunakan Set untuk mendapatkan nilai unik dan filter nilai kosong
+            const specialties = [...new Set(doctors.map(doc => doc.Spesialisasi).filter(Boolean))];
+            
+            specialties.forEach(specialty => {
+                const option = document.createElement('option');
+                option.value = specialty;
+                option.textContent = `Spesialis ${specialty}`;
+                specialtyFilter.appendChild(option);
+            });
+        }
+
+        // Fungsi untuk merender kartu dokter ke dalam HTML
+        function renderDoctors(doctors) {
+            const eksekutifList = document.getElementById('eksekutif-list');
+            const bpjsList = document.getElementById('bpjs-list');
+            
+            // Bersihkan konten sebelumnya
+            eksekutifList.innerHTML = '';
+            bpjsList.innerHTML = '';
+            
+            let foundEksekutif = false;
+            let foundBPJS = false;
+
+            doctors.forEach(doctor => {
+                // Periksa apakah data Jadwal ada dan tidak kosong
+                const jadwalHTML = doctor.Jadwal ? doctor.Jadwal.split('\n').map(line => `<p>${line.trim()}</p>`).join('') : '<p>Jadwal tidak tersedia</p>';
+                
+                const cardHTML = `
+                    <div class="doctor-card" data-specialty="${doctor.Spesialisasi}" data-services="${doctor.Layanan}">
+                        <h3>${doctor.NamaDokter}</h3>
+                        <span class="specialty">Spesialis ${doctor.Spesialisasi}</span>
+                        <div class="schedule">
+                            ${jadwalHTML}
+                        </div>
+                    </div>
+                `;
+
+                if (doctor.Layanan && doctor.Layanan.includes('Eksekutif')) {
+                    eksekutifList.innerHTML += cardHTML;
+                    foundEksekutif = true;
+                }
+                if (doctor.Layanan && doctor.Layanan.includes('BPJS')) {
+                    bpjsList.innerHTML += cardHTML;
+                    foundBPJS = true;
+                }
+            });
+
+            // Tampilkan atau sembunyikan bagian layanan
+            const eksekutifSection = document.getElementById('eksekutif-section');
+            const bpjsSection = document.getElementById('bpjs-section');
+
+            eksekutifSection.style.display = foundEksekutif ? 'block' : 'none';
+            bpjsSection.style.display = foundBPJS ? 'block' : 'none';
+
+            // Jika tidak ada dokter yang ditemukan sama sekali setelah filter
+            if (!foundEksekutif && !foundBPJS) {
+                const noResultMsg = '<p class="loading-text">Tidak ada dokter yang cocok dengan kriteria pencarian.</p>';
+                if (document.getElementById('serviceFilter').value === 'Eksekutif') {
+                    eksekutifList.innerHTML = noResultMsg;
+                    eksekutifSection.style.display = 'block';
+                } else if (document.getElementById('serviceFilter').value === 'BPJS') {
+                    bpjsList.innerHTML = noResultMsg;
+                    bpjsSection.style.display = 'block';
+                } else { // Jika filter layanan tidak dipilih
+                    eksekutifList.innerHTML = noResultMsg; // Tampilkan di salah satu list saja
+                    eksekutifSection.style.display = 'block';
+                }
+            }
+        }
+
+        // Fungsi untuk menyaring dan menampilkan dokter
+        function filterDoctors() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const specialtyFilter = document.getElementById('specialtyFilter').value;
+            const serviceFilter = document.getElementById('serviceFilter').value;
+            
+            const filteredDoctors = allDoctorsData.filter(doctor => {
+                // Pastikan properti ada sebelum mengaksesnya
+                const namaDokter = doctor.NamaDokter ? doctor.NamaDokter.toLowerCase() : '';
+                const spesialisasi = doctor.Spesialisasi ? doctor.Spesialisasi.toLowerCase() : '';
+                const layanan = doctor.Layanan ? doctor.Layanan : '';
+
+                const matchesSearch = namaDokter.includes(searchInput) || spesialisasi.includes(searchInput);
+                const matchesSpecialty = specialtyFilter === '' || spesialisasi === specialtyFilter.toLowerCase();
+                const matchesService = serviceFilter === '' || layanan.includes(serviceFilter);
+                
+                return matchesSearch && matchesSpecialty && matchesService;
+            });
+            
+            renderDoctors(filteredDoctors);
+        }
+
+        // Jalankan fungsi saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', fetchDoctorData);
+    </script>
+</body>
+</html>
